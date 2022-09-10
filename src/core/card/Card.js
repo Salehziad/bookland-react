@@ -1,6 +1,9 @@
 import React, {useState} from 'react';
 import {Link} from 'react-router-dom';
 import moment from 'moment';
+import { Redirect } from "react-router-dom";
+import {isAuthenticated} from '../../auth';
+
 import {
     Card,
     CardActions,
@@ -8,7 +11,7 @@ import {
     CardContent,
     CardMedia,
     Button,
-    Typography,
+    Typography
 } from '@material-ui/core';
 import UseStyles from './styles';
 import {addItem, updateItem, removeItem} from '../cartHelpers';
@@ -25,13 +28,18 @@ const Cards = ({
         setCount] = useState(product.count);
 
     const addToCart = () => {
-        addItem(product, setRedirect(true));
+        isAuthenticated()
+            // ? <Redirect
+            //         to={{
+            //         pathname: "/signin",
+            //     }}/>
+             addItem(product, setRedirect(true));
     };
 
     const showStock = quantity => {
         return quantity > 0
             ? (
-                <span className="badge badge-primary badge-pill">In Stock
+                <span className="badge badge-primary badge-pill">In Sto
                 </span>
             )
             : (
@@ -68,46 +76,49 @@ const Cards = ({
     };
 
     return (
-            <Card className={classes.card}>
-                <CardActionArea target='_blank'>
-                    <CardMedia
-                        className={classes.media}
-                        image={product.photo || 'https://www.industry.gov.au/sites/default/files/August%202018/image/news-placeho' +
-                        'lder-738.png'}/>
-                    <div className={classes.details}>
-                        <Typography variant='body2' color='textSecondary' componentt='h2'>{product.name}</Typography>
-                        <Typography variant='body2' color='textSecondary' componentt='h2'>${product.price}</Typography>
-                    </div>
-                    <Typography className={classes.title} gutterBottom variant='h5'>Category: {product.category && product.category.name}</Typography>
-                    <CardContent>
-                        <Typography variant='body2' color='textSecondary' componentt='p'>
-                            Added on {moment(product.createdAt).fromNow()}
-                        </Typography>
-                        <Typography variant='body2' color='textSecondary' componentt='p'>
-                            {showStock(product.quantity)}
-                        </Typography>
-                    </CardContent>
-                </CardActionArea>
-                <CardActions className={classes.cardActions}>
-                    <Button size='small' color='primary'>
-                        <Link to={`/product/${product._id}`}>View Product
-                        </Link>
-                    </Button>
-                    <Button size='small' color='primary' onClick={addToCart}>
-                        Add to cart
-                    </Button>
-                    <Button
-                        size='small'
-                        color='primary'
-                        onClick={() => {
-                        removeItem(product._id);
-                        setRun(!run);
-                    }}>
-                        Remove Product
-                    </Button>
-                    {showCartUpdateOptions()}
-                </CardActions>
-            </Card>
+        <Card className={classes.card}>
+            <CardActionArea target='_blank'>
+                <CardMedia
+                    className={classes.media}
+                    image={product.photo || 'https://www.industry.gov.au/sites/default/files/August%202018/image/news-placeho' +
+                    'lder-738.png'}/>
+                <div className={classes.details}>
+                    <Typography variant='body2' color='textSecondary' componentt='h2'>{product.name}</Typography>
+                    <Typography variant='body2' color='textSecondary' componentt='h2'>${product.price}</Typography>
+                </div>
+                <Typography className={classes.title} gutterBottom variant='h5'>Category: {product.category && product.category.name}</Typography>
+                <CardContent>
+                    <Typography variant='body2' color='textSecondary' componentt='p'>
+                        Added on {moment(product.createdAt).fromNow()}
+                    </Typography>
+                    <Typography variant='body2' color='textSecondary' componentt='p'>
+                        {showStock(product.quantity)}
+                    </Typography>
+                </CardContent>
+            </CardActionArea>
+            <CardActions className={classes.cardActions}>
+                <Button size='small' color='primary'>
+                    <Link
+                        to={isAuthenticated()
+                        ? `/product/${product._id}`
+                        : '/signin'}>View Product
+                    </Link>
+                </Button>
+                <Button size='small' color='primary' onClick={addToCart}>
+                    Add to cart
+                </Button>
+                <Button
+                    size='small'
+                    color='primary'
+                    onClick={() => {
+                    removeItem(product._id);
+                    setRun(!run);
+                }}>
+                    Remove Product
+                </Button>
+                {showCartUpdateOptions()}
+            </CardActions>
+        </Card>
     );
 };
 
