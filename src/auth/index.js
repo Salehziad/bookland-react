@@ -3,7 +3,7 @@ import Cookies from 'universal-cookie';
 const cookies = new Cookies();
 
 export const signup = user => {
-    return fetch(`${API}/signup`, {
+    return fetch(`https://bookland-saleh.herokuapp.com/api/signup`, {
         method: 'POST',
         headers: {
             Accept: 'application/json',
